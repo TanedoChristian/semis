@@ -1,0 +1,45 @@
+var express = require("express")
+var path=require("path");
+
+var five = require("johnny-five");
+var board = new five.Board();
+
+var port = 3400
+var app = express()
+var led;
+
+app.use(express.static(path.join(__dirname,"/public")))
+
+board.on("ready", function() {
+  led = new five.Led(13);
+  this.repl.inject({
+    // Allow limited on/off control access to the
+    // Led instance from the REPL.
+    on: function() {
+      led.on();
+    },
+    off: function() {
+      led.off();
+    },
+	blink:function(){
+		led.blink(250);
+	},
+	stop:function(){
+		led.stop();
+	}
+  });
+});
+
+app.get("/on",function(req,res){ led.on() })
+app.get("/off",function(req,res){ led.off() })
+app.get("/blink",function(req,res){ led.blink() })
+app.get("/stop",function(req,res){ led.stop() })
+
+
+app.get("/",function(req,res){
+	res.render("index.html")
+})
+
+var server = app.listen(port,function(){
+	console.log("listening at port : %d",port)
+})
