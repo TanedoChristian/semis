@@ -1,50 +1,53 @@
-const express = require('express')
-const app = express()
+// const express = require('express')
+// const app = express()
+// const five = require('johnny-five')
+// const PORT = 3000
+// const path = require("path")
+// const mongoose = require('mongoose')
+// const User = require('./model/UserModel');
+
+// const router = require('./routers/routes')
+
+// app.use(express.static(path.join(__dirname,"/")))
+// app.use(express.json())
+
+
+// app.use('/', router)
+
+
+
+// mongoose.connect('mongodb+srv://root:Cabinetsays17@cluster0.tgqn1sv.mongodb.net/?retryWrites=true&w=majority', {useNewUrlParser: true})
+//     .then(() =>{
+//         app.listen(PORT, ()=> console.log(`Listening at port: ${PORT}`))
+//     })
+//     .catch((error) =>{
+//         console.log(error.message)
+// })
+
+
 const five = require('johnny-five')
-const PORT = 3000
-const path = require("path")
-const mongoose = require('mongoose')
-const User = require('./model/UserModel');
 
-app.use(express.static(path.join(__dirname,"/")))
-app.use(express.json())
+// const User = require('../model/UserModel')
+// const UserModel = require('../model/UserModel')
 
 
 
-app.get('/', (req, res) => {
-    res.render("index.html")
-});
+let board = new five.Board()
 
-app.post('/login',async (req, res) => {
-    let message = ""
-    const user = await User.find({
-        username: req.body.username,
-        password: req.body.password
-    })
-
-    if(user.length >= 1) {
-        message = "success"
-    } else {
-        message = "error"
-    }
-
-    res.status(200).json({
-        message: message
-    })
-})
-
-
-app.get('/users', async (req,res) => {
-   
-})
-
-
-
-
-mongoose.connect('mongodb+srv://root:Cabinetsays17@cluster0.tgqn1sv.mongodb.net/?retryWrites=true&w=majority', {useNewUrlParser: true})
-    .then(() =>{
-        app.listen(PORT, ()=> console.log(`Listening at port: ${PORT}`))
-    })
-    .catch((error) =>{
-        console.log(error.message)
-})
+board.on("ready", function() {
+    led = new five.Led(13);
+    this.repl.inject({
+      on: function() {
+        led.on();
+      },
+      off: function() {
+        led.off();
+      },
+      blink:function(){
+          led.blink(250);
+      },
+      stop:function(){
+          led.stop();
+      }
+    });
+  });
